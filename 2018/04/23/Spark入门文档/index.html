@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Spark," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Spark操作数据类型 RDD (Resilient Distributed Datasets, 弹性分布式数据集 DataFrame Dataset  pyspark启动 – 使用shell 默认使用python 123$ ./bin/pyspark --master local[4]$./bin/pyspark --master local[4] --py-files code.py  使用I">
+<meta name="keywords" content="Spark">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark入门文档">
+<meta property="og:url" content="http://yoursite.com/2018/04/23/Spark入门文档/index.html">
+<meta property="og:site_name" content="yfchen&#39;s blog">
+<meta property="og:description" content="Spark操作数据类型 RDD (Resilient Distributed Datasets, 弹性分布式数据集 DataFrame Dataset  pyspark启动 – 使用shell 默认使用python 123$ ./bin/pyspark --master local[4]$./bin/pyspark --master local[4] --py-files code.py  使用I">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-05-08T11:16:35.871Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spark入门文档">
+<meta name="twitter:description" content="Spark操作数据类型 RDD (Resilient Distributed Datasets, 弹性分布式数据集 DataFrame Dataset  pyspark启动 – 使用shell 默认使用python 123$ ./bin/pyspark --master local[4]$./bin/pyspark --master local[4] --py-files code.py  使用I">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/23/Spark入门文档/"/>
+
+
+
+
+
+  <title>Spark入门文档 | yfchen's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yfchen's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-schedule">
+          <a href="/schedule/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-calendar"></i> <br />
+            
+            Schedule
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/23/Spark入门文档/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yfchen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yfchen's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spark入门文档</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-04-23T19:14:15+08:00">
+                2018-04-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="Spark操作数据类型"><a href="#Spark操作数据类型" class="headerlink" title="Spark操作数据类型"></a>Spark操作数据类型</h4><ul>
+<li>RDD (Resilient Distributed Datasets, 弹性分布式数据集</li>
+<li>DataFrame</li>
+<li>Dataset</li>
+</ul>
+<h4 id="pyspark启动-–-使用shell"><a href="#pyspark启动-–-使用shell" class="headerlink" title="pyspark启动 – 使用shell"></a>pyspark启动 – 使用shell</h4><ol>
+<li><p>默认使用python</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> ./bin/pyspark --master local[4]</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span>./bin/pyspark --master local[4] --py-files code.py</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用Ipython</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> PYSPARK_DRIVER_PYTHON=ipython ./bin/pyspark</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用Jupyter notebook</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> PYSPARK_DRIVER_PYTHON=jupyter PYSPARK_DRIVER_PYTHON_OPTS=notebook ./bin/pyspark</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="RDD操作"><a href="#RDD操作" class="headerlink" title="RDD操作"></a>RDD操作</h4><p>​    <strong>RDD</strong>支持两种操作, <strong>transformations</strong>和<strong>actions</strong></p>
+<p>​    <strong>transformations</strong>操作是指: 根据已有的dataset创建新的dataset</p>
+<p>​    <strong>actions</strong>操作是指: 在运行完dataset上的计算操作后,返回到驱动程序一个值</p>
+<p>​    所有<strong>Spark</strong>的<strong>transformations</strong>操作都是懒惰的,他们并不是立刻计算结果,而是在执行<strong>actions</strong>操作的时执行.</p>
+<p>​    这种设计使得<strong>Spark</strong>的运行更加有效率</p>
+<h4 id="打印RDD中的元素"><a href="#打印RDD中的元素" class="headerlink" title="打印RDD中的元素"></a>打印RDD中的元素</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 打印所有的</span></span><br><span class="line">rdd.collect().foreah(println)</span><br><span class="line"><span class="comment"># 打印100个</span></span><br><span class="line">rdd.take(<span class="number">100</span>).foreach(println)</span><br></pre></td></tr></table></figure>
+<h4 id="Transformations"><a href="#Transformations" class="headerlink" title="Transformations"></a>Transformations</h4><table>
+<thead>
+<tr>
+<th><strong>Transfromations</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>map</strong>(<em>func</em>)</td>
+<td>返回一个新的分布式数据集，将数据源的每一个元素传递给函数 <em>func</em>映射组成.</td>
+</tr>
+<tr>
+<td><strong>filter</strong>(<em>func</em>)</td>
+<td>返回一个新的数据集，从数据源中选中一些元素通过函数 <em>func</em> 返回 true.</td>
+</tr>
+<tr>
+<td><strong>flatMap</strong>(<em>func</em>)</td>
+<td>类似于 map，但是每个输入项能被映射成多个输出项(所以 <em>func</em> 必须返回一个 Seq，而不是单个 item)。</td>
+</tr>
+<tr>
+<td><strong>mapPartitions</strong>(<em>func</em>)</td>
+<td>类似于 map，但是分别运行在 RDD 的每个分区上，所以 <em>func</em> 的类型必须是 <code>Iterator&lt;T&gt; =&gt; Iterator&lt;U&gt;</code> 当运行在类型为 T 的 RDD 上。</td>
+</tr>
+<tr>
+<td><strong>mapPartitionsWithIndex</strong>(<em>func</em>)</td>
+<td>类似于 mapPartitions，但是 <em>func</em> 需要提供一个 integer 值描述索引(index)，所以 <em>func</em> 的类型必须是 (Int, Iterator) =&gt; Iterator 当运行在类型为 T 的 RDD 上。</td>
+</tr>
+<tr>
+<td><strong>sample</strong>(<em>withReplacement</em>, <em>fraction</em>, <em>seed</em>)</td>
+<td>根据给定的随机种子seed，随机抽样出数量为frac的数据</td>
+</tr>
+<tr>
+<td><strong>union</strong>(otherDataset)</td>
+<td>返回一个新的数据集，由原数据集和参数联合而成</td>
+</tr>
+<tr>
+<td><strong>groupByKey</strong>([numTasks])</td>
+<td>在一个由（K,V）对组成的数据集上调用，返回一个（K，Seq[V])对的数据集。注意：默认情况下，使用8个并行任务进行分组，你可以传入numTask可选参数，根据数据量设置不同数目的Task</td>
+</tr>
+<tr>
+<td><strong>reduceByKey</strong>(func, [numTasks])</td>
+<td>在一个（K，V)对的数据集上使用，返回一个（K，V）对的数据集，key相同的值，都被使用指定的reduce函数聚合到一起。和groupbykey类似，任务的个数是可以通过第二个可选参数来配置的。</td>
+</tr>
+<tr>
+<td><strong>join</strong>(otherDataset, [numTasks])</td>
+<td>在类型为（K,V)和（K,W)类型的数据集上调用，返回一个（K,(V,W))对，每个key中的所有元素都在一起的数据集</td>
+</tr>
+<tr>
+<td><strong>groupWith</strong>(otherDataset, [numTasks])</td>
+<td>在类型为（K,V)和(K,W)类型的数据集上调用，返回一个数据集，组成元素为（K, Seq[V], Seq[W]) Tuples。这个操作在其它框架，称为CoGroup</td>
+</tr>
+<tr>
+<td><strong>cartesian</strong>(otherDataset)</td>
+<td>笛卡尔积。但在数据集T和U上调用时，返回一个(T，U）对的数据集，所有元素交互进行笛卡尔积。</td>
+</tr>
+<tr>
+<td><strong>coalesce</strong>(<em>numPartitions</em>)</td>
+<td>增加RDD的分区,使得操作更加有效率,不改变数据的顺序</td>
+</tr>
+<tr>
+<td><strong>repartition</strong>(<em>numPartitions</em>)</td>
+<td>改变RDD的分区数量,会改变数据的顺序</td>
+</tr>
+<tr>
+<td><strong>repartitionAndSortWithinPartitions</strong>(<em>partitioner</em>)</td>
+<td>对RDD重新分区,并且对分区后的每一个分区按照key进行排序,这比只用repartition有效率</td>
+</tr>
+<tr>
+<td><strong>intersection</strong>(<em>otherDataset</em>)</td>
+<td>返回两个RDD的交集,结果中无重复元素</td>
+</tr>
+<tr>
+<td><strong>distinct</strong>([<em>numPartitions</em>]))</td>
+<td>返回一个新的数据集,只包含原始数据集的唯一元素</td>
+</tr>
+</tbody>
+</table>
+<h4 id="Examples"><a href="#Examples" class="headerlink" title="Examples"></a>Examples</h4><p><strong>map</strong>(<em>func</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd.map(<span class="keyword">lambda</span> x: x*x).collect()</span><br><span class="line">[<span class="number">1</span>,<span class="number">4</span>,<span class="number">9</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>filter</strong>(<em>func</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd.filter(<span class="keyword">lambda</span> x: x &gt; <span class="number">2</span>).collect()</span><br><span class="line">[<span class="number">3</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>flatMap</strong>(<em>func</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># map 与flatMap的区别</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd.map(<span class="keyword">lambda</span> x: range(<span class="number">1</span>, x)).collect()</span><br><span class="line">[[], [<span class="number">1</span>], [<span class="number">1</span>, <span class="number">2</span>]]</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd.flatMap(<span class="keyword">lambda</span> x: range(<span class="number">1</span>, x))</span><br><span class="line">[<span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+<p> <strong>mapPartitions</strong>(<em>func</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>], <span class="number">2</span>)</span><br><span class="line">// 两个分区的数据分别为 [<span class="number">1</span>,<span class="number">2</span>] [<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(x)</span>:</span> <span class="keyword">yield</span> sum(x)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd.mapPartitions(f).collect()</span><br><span class="line">[<span class="number">3</span>, <span class="number">7</span>]</span><br></pre></td></tr></table></figure>
+<p> <strong>mapPartitionsWithIndex</strong>(<em>func</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">4</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(splitIndex, iterator)</span>:</span> <span class="keyword">yield</span> splitIndex</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd.mapPartitionsWithIndex(f).sum()</span><br><span class="line"><span class="number">6</span></span><br></pre></td></tr></table></figure>
+<p><strong>mapValues</strong>(<em>f</em>)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 遍历RDD键值对中的的每一个值,不改变键的前提下,使用map中的函数,这个操作依旧保持着原来的分区</span><br><span class="line">&gt;&gt;&gt; x = sc.parallelize([(&quot;a&quot;, [&quot;apple&quot;, &quot;banana&quot;, &quot;lemon&quot;]), (&quot;b&quot;, [&quot;grapes&quot;])])</span><br><span class="line">&gt;&gt;&gt; def f(x): return len(x)</span><br><span class="line">&gt;&gt;&gt; x.mapValues(f).collect()</span><br><span class="line">[(&apos;a&apos;, 3), (&apos;b&apos;, 1)]</span><br></pre></td></tr></table></figure>
+<p><strong>sample</strong>(<em>withReplacement</em>, <em>fraction</em>, <em>seed</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回这个RDD的一个子集</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize(range(<span class="number">100</span>), <span class="number">4</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd.sample(<span class="keyword">False</span>, <span class="number">0.1</span>, <span class="number">81</span>).count()</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
+<p> <strong>union</strong>(otherDataset)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#返回一个新的数据集，由原数据集和参数联合而成</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([<span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd.union(rdd).collect()</span><br><span class="line">[<span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>intersection</strong>(<em>otherDataset</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回两个RDD的交集,结果中无重复元素</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd1 = sc.parallelize([<span class="number">1</span>, <span class="number">10</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd2 = sc.parallelize([<span class="number">1</span>, <span class="number">6</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">7</span>, <span class="number">8</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd1.intersection(rdd2).collect()</span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>distinct</strong>([<em>numPartitions</em>]))</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回一个新的数据集,只包含原始数据集的唯一元素</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sorted(sc.parallelize([<span class="number">1</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]).distinct().collect())</span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br></pre></td></tr></table></figure>
+<p> <strong>groupByKey</strong>([numTasks])</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; rdd = sc.parallelize([(&quot;a&quot;, 1), (&quot;b&quot;, 1), (&quot;a&quot;, 1)])</span><br><span class="line">&gt;&gt;&gt; sorted(rdd.groupByKey().mapValues(len).collect())</span><br><span class="line">[(&apos;a&apos;, 2), (&apos;b&apos;, 1)]</span><br><span class="line">&gt;&gt;&gt; sorted(rdd.groupByKey().mapValues(list).collect())</span><br><span class="line">[(&apos;a&apos;, [1, 1]), (&apos;b&apos;, [1])]</span><br></pre></td></tr></table></figure>
+<p><strong>reduceByKey</strong>(func, [numTasks]) </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> operator <span class="keyword">import</span> add</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([(<span class="string">"a"</span>, <span class="number">1</span>), (<span class="string">"b"</span>, <span class="number">1</span>), (<span class="string">"a"</span>, <span class="number">1</span>)])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sorted(rdd.reduceByKey(add).collect())</span><br><span class="line">[(<span class="string">'a'</span>, <span class="number">2</span>), (<span class="string">'b'</span>, <span class="number">1</span>)]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 和groupByKey的比较</span></span><br><span class="line"><span class="comment"># groupByKey</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> operator <span class="keyword">import</span> add</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([(<span class="string">"a"</span>, <span class="number">1</span>), (<span class="string">"b"</span>, <span class="number">1</span>), (<span class="string">"a"</span>, <span class="number">1</span>)])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sorted(rdd.groupByKey().mapValues(sum).collect())</span><br><span class="line">[(<span class="string">'a'</span>, <span class="number">2</span>), (<span class="string">'b'</span>, <span class="number">1</span>)]</span><br><span class="line"></span><br><span class="line"><span class="comment">#redeuceByKey直接按key进行函数操作,而groupByKey需要group之后再mapValue操作</span></span><br></pre></td></tr></table></figure>
+<p><strong>join</strong>(<em>otherDataset</em>, [<em>numPartitions</em>])</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#在类型为（K,V)和（K,W)类型的数据集上调用，返回一个（K,(V,W))对，每个key中的所有元素都在一起的数据集</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = sc.parallelize([(<span class="string">"a"</span>, <span class="number">1</span>), (<span class="string">"b"</span>, <span class="number">4</span>)])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y = sc.parallelize([(<span class="string">"a"</span>, <span class="number">2</span>), (<span class="string">"a"</span>, <span class="number">3</span>)])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sorted(x.join(y).collect())</span><br><span class="line">[(<span class="string">'a'</span>, (<span class="number">1</span>, <span class="number">2</span>)), (<span class="string">'a'</span>, (<span class="number">1</span>, <span class="number">3</span>))]</span><br></pre></td></tr></table></figure>
+<p><strong>groupWith</strong>(<em>other</em>, <strong>others</strong>)   <strong>A.K.A</strong>  <strong>cogroup</strong>(<em>otherDataset</em>, [<em>numPartitions</em>]) </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>w = sc.parallelize([(<span class="string">"a"</span>, <span class="number">5</span>), (<span class="string">"b"</span>, <span class="number">6</span>)])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = sc.parallelize([(<span class="string">"a"</span>, <span class="number">1</span>), (<span class="string">"b"</span>, <span class="number">4</span>)])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y = sc.parallelize([(<span class="string">"a"</span>, <span class="number">2</span>)])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>z = sc.parallelize([(<span class="string">"b"</span>, <span class="number">42</span>)])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[(x, tuple(map(list, y))) <span class="keyword">for</span> x, y <span class="keyword">in</span> sorted(list(w.groupWith(x, y, z).collect()))]</span><br><span class="line">[(<span class="string">'a'</span>, ([<span class="number">5</span>], [<span class="number">1</span>], [<span class="number">2</span>], [])), (<span class="string">'b'</span>, ([<span class="number">6</span>], [<span class="number">4</span>], [], [<span class="number">42</span>]))]</span><br></pre></td></tr></table></figure>
+<p><strong>cartesian</strong>(<em>otherDataset</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回两个RDD的笛卡尔积</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([<span class="number">1</span>, <span class="number">2</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sorted(rdd.cartesian(rdd).collect())</span><br><span class="line">[(<span class="number">1</span>, <span class="number">1</span>), (<span class="number">1</span>, <span class="number">2</span>), (<span class="number">2</span>, <span class="number">1</span>), (<span class="number">2</span>, <span class="number">2</span>)]</span><br></pre></td></tr></table></figure>
+<p><strong>coalesce</strong>(<em>numPartitions</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 根据指定的分区数目返回新的RDD, 但不改变数据的顺序</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sc.parallelize([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="number">3</span>).glom().collect()</span><br><span class="line">[[<span class="number">1</span>], [<span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>]]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sc.parallelize([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], <span class="number">3</span>).coalesce(<span class="number">1</span>).glom().collect()</span><br><span class="line">[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]]</span><br></pre></td></tr></table></figure>
+<p><strong>repartition</strong>(<em>numPartitions</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 根据指定的分区数目返回新的RDD, 会改变数据的顺序</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>], <span class="number">4</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sorted(rdd.glom().collect())</span><br><span class="line">[[<span class="number">1</span>], [<span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>], [<span class="number">6</span>, <span class="number">7</span>]]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>len(rdd.repartition(<span class="number">2</span>).glom().collect())</span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>len(rdd.repartition(<span class="number">10</span>).glom().collect())</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
+<p><strong>repartitionAndSortWithinPartitions</strong>(<em>partitioner</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 对RDD重新分区,并且对分区后的每一个分区按照key进行排序,这比只用repartition有效率</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([(<span class="number">0</span>, <span class="number">5</span>), (<span class="number">3</span>, <span class="number">8</span>), (<span class="number">2</span>, <span class="number">6</span>), (<span class="number">0</span>, <span class="number">8</span>), (<span class="number">3</span>, <span class="number">8</span>), (<span class="number">1</span>, <span class="number">3</span>)])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd2 = rdd.repartitionAndSortWithinPartitions(<span class="number">2</span>, <span class="keyword">lambda</span> x: x % <span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd2.glom().collect()</span><br><span class="line">[[(<span class="number">0</span>, <span class="number">5</span>), (<span class="number">0</span>, <span class="number">8</span>), (<span class="number">2</span>, <span class="number">6</span>)], [(<span class="number">1</span>, <span class="number">3</span>), (<span class="number">3</span>, <span class="number">8</span>), (<span class="number">3</span>, <span class="number">8</span>)]]</span><br></pre></td></tr></table></figure>
+<h4 id="Aciton"><a href="#Aciton" class="headerlink" title="Aciton"></a>Aciton</h4><table>
+<thead>
+<tr>
+<th><strong>Action</strong></th>
+<th><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>reduce</strong>(<em>func</em>)</td>
+<td>通过函数func聚集数据集中的所有元素。Func函数接受2个参数，返回一个值。这个函数必须是关联性的，确保可以被正确的并发执行</td>
+</tr>
+<tr>
+<td><strong>collect</strong>()</td>
+<td>在Driver的程序中，以数组的形式，返回数据集的所有元素。这通常会在使用filter或者其它操作后，返回一个足够小的数据子集再使用，直接将整个RDD集Collect返回，很可能会让Driver程序OOM</td>
+</tr>
+<tr>
+<td><strong>count</strong>()</td>
+<td>返回数据集的元素个数</td>
+</tr>
+<tr>
+<td><strong>first</strong>()</td>
+<td>返回数据集的第一个元素（类似于take(1)）</td>
+</tr>
+<tr>
+<td><strong>take</strong>(<em>n</em>)</td>
+<td>返回一个数组，由数据集的前n个元素组成。注意，这个操作目前并非在多个节点上，并行执行，而是Driver程序所在机器，单机计算所有的元素(Gateway的内存压力会增大，需要谨慎使用）</td>
+</tr>
+<tr>
+<td><strong>saveAsTextFile</strong>(<em>path</em>)</td>
+<td>将数据集的元素，以textfile的形式，保存到本地文件系统，hdfs或者任何其它hadoop支持的文件系统。Spark将会调用每个元素的toString方法，并将它转换为文件中的一行文本</td>
+</tr>
+<tr>
+<td><strong>countByKey</strong>()</td>
+<td>计算每一个key的元素的数量</td>
+</tr>
+<tr>
+<td><strong>foreach</strong>(<em>func</em>)</td>
+<td>在数据集的每一个元素上，运行函数func。这通常用于更新一个累加器变量，或者和外部存储系统做交互</td>
+</tr>
+</tbody>
+</table>
+<p><strong>reduce</strong>(<em>func</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> operator <span class="keyword">import</span> add</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sc.parallelize([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]).reduce(add)</span><br><span class="line"><span class="number">15</span></span><br></pre></td></tr></table></figure>
+<p><strong>collect</strong>()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以数组的形式返回一个list</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sc.parallelize([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]).collect()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</span><br></pre></td></tr></table></figure>
+<p> <strong>count</strong>()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回数据集的元素个数</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sc.parallelize([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]).count()</span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
+<p> <strong>first</strong>()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回数据集的第一个元素</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sc.parallelize([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]).first()</span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>  <strong>take</strong>(<em>n</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回一个数组，由数据集的前n个元素组成。</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sc.parallelize([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]).cache().take(<span class="number">2</span>)</span><br><span class="line">[<span class="number">2</span>, <span class="number">3</span>]</span><br></pre></td></tr></table></figure>
+<p> <strong>countByKey</strong>()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算每一个key的元素的数量</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd = sc.parallelize([(<span class="string">"a"</span>, <span class="number">1</span>), (<span class="string">"b"</span>, <span class="number">1</span>), (<span class="string">"a"</span>, <span class="number">1</span>)])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sorted(rdd.countByKey().items())</span><br><span class="line">[(<span class="string">'a'</span>, <span class="number">2</span>), (<span class="string">'b'</span>, <span class="number">1</span>)]</span><br></pre></td></tr></table></figure>
+<p> <strong>foreach</strong>(<em>func</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">对RDD中的所有元素都应用函数func</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(x)</span>:</span> print(x)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>sc.parallelize([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]).foreach(f)</span><br></pre></td></tr></table></figure>
+<h4 id="RDD-持久化"><a href="#RDD-持久化" class="headerlink" title="RDD 持久化"></a>RDD 持久化</h4><p><strong>cache</strong>()   持久化RDD使用默认存储水平(<strong>MEMORY_ONLY</strong>)</p>
+<p><strong>persist</strong>(<em>storageLevel=StorageLevel(False</em>, <em>True</em>, <em>False</em>, <em>False</em>, <em>1)</em>)</p>
+<p>Pyhton只支持这几种存储:</p>
+<ul>
+<li>MEMORY_ONLY, MEMORY_ONLY_2, MEMORY_AND_DISK, MEMORY_AND_DISK_2, DISK_ONLY, and DISK_ONLY_2.*</li>
+</ul>
+<p><strong>Removing data</strong></p>
+<p>​    使用RDD.unpersist()</p>
+<h4 id=""><a href="#" class="headerlink" title=" "></a> </h4><h4 id="DataFrame操作"><a href="#DataFrame操作" class="headerlink" title="DataFrame操作"></a>DataFrame操作</h4><p><strong>columns</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#返回DataFrame的所有列名</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.columns</span><br><span class="line">[<span class="string">'age'</span>, <span class="string">'name'</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>count</strong>()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回DataFrame的行数</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.count()</span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p><strong>createOrReplaceTempView</strong>(<em>name</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建或替换临时视图</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.createOrReplaceTempView(<span class="string">"people"</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>createGlobalTempView</strong>(<em>name</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建全局临时视图</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.createGlobalTempView(<span class="string">"people"</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>describe</strong>(*<em>cols</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算列的基本统计情况</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.describe().show()</span><br><span class="line">+-------+------------------+-----+</span><br><span class="line">|summary|               age| name|</span><br><span class="line">+-------+------------------+-----+</span><br><span class="line">|  count|                 <span class="number">2</span>|    <span class="number">2</span>|</span><br><span class="line">|   mean|               <span class="number">3.5</span>| null|</span><br><span class="line">| stddev|<span class="number">2.1213203435596424</span>| null|</span><br><span class="line">|    min|                 <span class="number">2</span>|Alice|</span><br><span class="line">|    max|                 <span class="number">5</span>|  Bob|</span><br><span class="line">+-------+------------------+-----+</span><br></pre></td></tr></table></figure>
+<p><strong>distinct</strong>()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回一个新的DataFrame,只包含原DataFrame的不重复的行</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.distinct().count()</span><br><span class="line"><span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p><strong>drop</strong>(<em>cols</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除指定列</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.drop(<span class="string">'age'</span>).collect()</span><br><span class="line">[Row(name=<span class="string">u'Alice'</span>), Row(name=<span class="string">u'Bob'</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>dropDuplicates</strong>(<em>subset=None</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除重复行,返回一个没有重复行的DataFrame</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> pyspark.sql <span class="keyword">import</span> Row</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df = sc.parallelize([ \</span><br><span class="line">     Row(name=<span class="string">'Alice'</span>, age=<span class="number">5</span>, height=<span class="number">80</span>), \</span><br><span class="line">     Row(name=<span class="string">'Alice'</span>, age=<span class="number">5</span>, height=<span class="number">80</span>), \</span><br><span class="line">     Row(name=<span class="string">'Alice'</span>, age=<span class="number">10</span>, height=<span class="number">80</span>)]).toDF()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.dropDuplicates().show()</span><br><span class="line">+---+------+-----+</span><br><span class="line">|age|height| name|</span><br><span class="line">+---+------+-----+</span><br><span class="line">|  <span class="number">5</span>|    <span class="number">80</span>|Alice|</span><br><span class="line">| <span class="number">10</span>|    <span class="number">80</span>|Alice|</span><br><span class="line">+---+------+-----+</span><br></pre></td></tr></table></figure>
+<p><strong>dropna</strong>(<em>how=’any’</em>, <em>thresh=None</em>, <em>subset=None</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回一个移除了包含null的行的DataFrame, DataFrame.dropna() 和 DataFrameNaFunctions.drop()互为别名</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">参数:</span></span><br><span class="line"><span class="string">how – ‘any’ or ‘all’. 如果是‘any’, 会删除任何包含nulls的行. 如果是 ‘all’, 仅删除值都是null的行.</span></span><br><span class="line"><span class="string">thresh – 整数, 默认是None. 如果特殊指定 , 则删除 非null值小于阈值的行.这个参数户籍覆盖how.</span></span><br><span class="line"><span class="string">subset – 可以删除指定列的值是na的行.</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df4.na.drop().show()</span><br><span class="line">+---+------+-----+</span><br><span class="line">|age|height| name|</span><br><span class="line">+---+------+-----+</span><br><span class="line">| <span class="number">10</span>|    <span class="number">80</span>|Alice|</span><br><span class="line">+---+------+-----+</span><br></pre></td></tr></table></figure>
+<p>dtypes</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#返回所有的列名和他们的数据类型,作为一个列表</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.dtypes</span><br><span class="line">[(<span class="string">'age'</span>, <span class="string">'int'</span>), (<span class="string">'name'</span>, <span class="string">'string'</span>)]</span><br></pre></td></tr></table></figure>
+<p><strong>fillna</strong>(<em>value</em>, <em>subset=None</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 替换null值,也叫作na.fill(),</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">参数:</span></span><br><span class="line"><span class="string">value:指定要替换null的值</span></span><br><span class="line"><span class="string">subset:可以指定列进行替换null</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df4.na.fill(<span class="number">50</span>).show()</span><br><span class="line">+---+------+-----+</span><br><span class="line">|age|height| name|</span><br><span class="line">+---+------+-----+</span><br><span class="line">| <span class="number">10</span>|    <span class="number">80</span>|Alice|</span><br><span class="line">|  <span class="number">5</span>|    <span class="number">50</span>|  Bob|</span><br><span class="line">| <span class="number">50</span>|    <span class="number">50</span>|  Tom|</span><br><span class="line">| <span class="number">50</span>|    <span class="number">50</span>| null|</span><br><span class="line">+---+------+-----+</span><br></pre></td></tr></table></figure>
+<p><strong>join</strong>(<em>other</em>, <em>on=None</em>, <em>how=None</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 根据给定的连接表达式,来连接两个DataFrame</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">参数:</span></span><br><span class="line"><span class="string">other:要连接的DataFrame</span></span><br><span class="line"><span class="string">on: 指点连接的条件</span></span><br><span class="line"><span class="string">how: 字符串,默认是inner,必须是其中inner, cross, outer, full, full_outer, left, left_outer, right, right_outer, left_semi和left_anti 其中一个</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.join(df2, df.name == df2.name, <span class="string">'outer'</span>).select(df.name, df2.height).collect()</span><br><span class="line">[Row(name=<span class="keyword">None</span>, height=<span class="number">80</span>), Row(name=<span class="string">'Bob'</span>, height=<span class="number">85</span>), Row(name=<span class="string">'Alice'</span>, height=<span class="keyword">None</span>)]</span><br></pre></td></tr></table></figure>
+<p><strong>printSchema</strong>()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以树的形式打印概览</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.printSchema()</span><br><span class="line">root</span><br><span class="line"> |-- age: integer (nullable = true)</span><br><span class="line"> |-- name: string (nullable = true)</span><br></pre></td></tr></table></figure>
+<p><strong>RDD</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回一个RDD,可以把DataFrame转化为RDD</span></span><br></pre></td></tr></table></figure>
+<p><strong>replace</strong>(<em>to_replace</em>, <em>value=<no value=""></no></em>, <em>subset=None</em>)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># 返回一个新的DataFrame,通过把一个新值替换原有的值,</span><br></pre></td></tr></table></figure>
+<p><strong>withColumn</strong>(<em>colName</em>, <em>col</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回一个新的DataFrame,通过增加一列或者使用相同的名字替换现有的列</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">参数:</span></span><br><span class="line"><span class="string">colName – string, 新列的名字</span></span><br><span class="line"><span class="string">col – 新列的列表达式</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.withColumn(<span class="string">'age2'</span>, df.age + <span class="number">2</span>).collect()</span><br><span class="line">[Row(age=<span class="number">2</span>, name=<span class="string">'Alice'</span>, age2=<span class="number">4</span>), Row(age=<span class="number">5</span>, name=<span class="string">'Bob'</span>, age2=<span class="number">7</span>)]</span><br></pre></td></tr></table></figure>
+<p><strong>withColumnRenamed</strong>(<em>existing</em>, <em>new</em>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 返回一个新的DataFrame,通过对现有的列重命名</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">参数:</span></span><br><span class="line"><span class="string">existing: 现有的列</span></span><br><span class="line"><span class="string">new: 新列</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.withColumnRenamed(<span class="string">'age'</span>, <span class="string">'age2'</span>).collect()</span><br><span class="line">[Row(age2=<span class="number">2</span>, name=<span class="string">'Alice'</span>), Row(age2=<span class="number">5</span>, name=<span class="string">'Bob'</span>)]</span><br></pre></td></tr></table></figure>
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><p>[][<a href="http://spark.apache.org/docs/latest/rdd-programming-guide.html]" target="_blank" rel="noopener">http://spark.apache.org/docs/latest/rdd-programming-guide.html]</a></p>
+<p>[<a href="http://spark.apache.org/docs/latest/rdd-programming-guide.html][]" target="_blank" rel="noopener">http://spark.apache.org/docs/latest/rdd-programming-guide.html][]</a></p>
+<p>[<a href="http://spark.apache.org/docs/2.1.0/api/python/pyspark.html][]" target="_blank" rel="noopener">http://spark.apache.org/docs/2.1.0/api/python/pyspark.html][]</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Spark/" rel="tag"># Spark</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/21/Spark-UDF/" rel="next" title="Spark-UDF">
+                <i class="fa fa-chevron-left"></i> Spark-UDF
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/25/Spark-on-Yarn/" rel="prev" title="Spark on Yarn">
+                Spark on Yarn <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">yfchen</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/chenyaofei-njupt" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:chenyaofei.njupt@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Spark操作数据类型"><span class="nav-number">1.</span> <span class="nav-text">Spark操作数据类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pyspark启动-–-使用shell"><span class="nav-number">2.</span> <span class="nav-text">pyspark启动 – 使用shell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RDD操作"><span class="nav-number">3.</span> <span class="nav-text">RDD操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#打印RDD中的元素"><span class="nav-number">4.</span> <span class="nav-text">打印RDD中的元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transformations"><span class="nav-number">5.</span> <span class="nav-text">Transformations</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Examples"><span class="nav-number">6.</span> <span class="nav-text">Examples</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Aciton"><span class="nav-number">7.</span> <span class="nav-text">Aciton</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RDD-持久化"><span class="nav-number">8.</span> <span class="nav-text">RDD 持久化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#"><span class="nav-number">9.</span> <span class="nav-text"> </span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DataFrame操作"><span class="nav-number">10.</span> <span class="nav-text">DataFrame操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考链接"><span class="nav-number">11.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yfchen</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
